@@ -1,56 +1,45 @@
-import requests
-import urllib3
-import os
-from dotenv import load_dotenv
+import json
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-load_dotenv()
-KIBANA_HOST = os.getenv("METRICOPS_KB_HOST_ETE")
-API_KEY = os.getenv("METRICOPS_KB_APIKEY_ETE")
-
-HEADERS = {
-    "Authorization": f"ApiKey {API_KEY}",
-    "kbn-xsrf": "true",
-    "Content-Type": "application/json"
-}
-BASE_URL = f"{KIBANA_HOST}/api/dashboards/dashboard"
+from kibana import kb_client
 
 
-def get_list_of_dashboards(page=1, per_page=1000):
-    response = requests.get(
-        BASE_URL,
-        headers=HEADERS,
-        params={"page": page, "perPage": per_page},
-        verify=False
-    )
-    return response.json() if response.ok else response.text
+def get_list_of_dashboards(page=1, per_page=1000, space=None):
+    return kb_client.get("", params={"page": page, "perPage": per_page}, space=space)
 
 
-def get_dashboard(dashboard_id):
-    url = f"{BASE_URL}/{dashboard_id}"
-    response = requests.get(url, headers=HEADERS, verify=False)
-    return response.json() if response.ok else response.text
+def get_dashboard(dashboard_id, space=None):
+    return kb_client.get(f"/{dashboard_id}", space=space)
 
 
-def update_dashboard(dashboard_id, data: dict):
-    url = f"{BASE_URL}/{dashboard_id}"
-    response = requests.put(url, headers=HEADERS, json=data, verify=False)
-    return response.json() if response.ok else response.text
+def update_dashboard(dashboard_id, data: dict, space=None):
+    return kb_client.put(f"/{dashboard_id}", data, space=space)
 
 
-def create_dashboard(dashboard_id, data: dict):
-    url = f"{BASE_URL}/{dashboard_id}"
-    response = requests.post(url, headers=HEADERS, json=data, verify=False)
-    return response.json() if response.ok else response.text
+def create_dashboard(dashboard_id, data: dict, space=None):
+    return kb_client.post(f"/{dashboard_id}", data, space=space)
 
 
-def delete_dashboard(dashboard_id):
-    url = f"{BASE_URL}/{dashboard_id}"
-    response = requests.delete(url, headers=HEADERS, verify=False)
-    return response.json() if response.ok else response.text
+def delete_dashboard(dashboard_id, space=None):
+    return kb_client.delete(f"/{dashboard_id}", space=space)
+
+
+def list_dashboard_info(dashboards):
+    dashboard_list = []
+    for dashboard in dashboards.get('items', []):
+        dashboard_list.append({
+            "id": dashboard.get("id"),
+            "title": dashboard.get("attributes", {}).get("title"),
+            "createdAt": dashboard.get("createdAt"),
+            "createdBy": dashboard.get("createdBy"),
+            "updatedAt": dashboard.get("updatedAt"),
+            "updatedBy": dashboard.get("updatedBy"),
+            "namespaces": dashboard.get("namespaces")
+        })
+    return dashboard_list
 
 
 if __name__ == "__main__":
-    dashboards = get_list_of_dashboards(page=1, per_page=2)
-    print(dashboards)
+    dashboards = get_list_of_dashboards(page=1, per_page=300,space="stable")
+    dashboard_info = list_dashboard_info(dashboards)
+    print(json.dumps(dashboard_info, indent=2, ensure_ascii=False))
+
