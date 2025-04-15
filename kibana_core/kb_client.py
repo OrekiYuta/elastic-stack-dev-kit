@@ -7,10 +7,10 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 load_dotenv()
 KIBANA_HOST = os.getenv("METRICOPS_KB_HOST_ETE")
-API_KEY = os.getenv("METRICOPS_KB_APIKEY_ETE")
+KIBANA_API_KEY = os.getenv("METRICOPS_KB_APIKEY_ETE")
 
 HEADERS = {
-    "Authorization": f"ApiKey {API_KEY}",
+    "Authorization": f"ApiKey {KIBANA_API_KEY}",
     "kbn-xsrf": "true",
     "Content-Type": "application/json"
 }

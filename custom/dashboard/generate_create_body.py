@@ -1,5 +1,5 @@
 import json
-from kibana.dashboard import get_dashboard
+from kibana_core.dashboard import get_dashboard
 
 def generate_dashboard_create_body(dashboard_id):
     # Retrieve the full dashboard object by ID

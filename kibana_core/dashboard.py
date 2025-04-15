@@ -1,6 +1,6 @@
 import json
 
-from kibana import kb_client
+from kibana_core import kb_client
 
 
 def get_list_of_dashboards(page=1, per_page=1000, space=None):
