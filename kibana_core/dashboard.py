@@ -1,5 +1,4 @@
 import json
-
 from kibana_core import kb_client
 
 

@@ -10,5 +10,5 @@ ELASTICSEARCH_APIKEY = os.getenv("METRICOPS_ES_APIKEY_ETE")
 es = Elasticsearch(
     [ELASTICSEARCH_HOST],
     api_key=ELASTICSEARCH_APIKEY,
-    verify_certs=False
+    # verify_certs=False
 )
