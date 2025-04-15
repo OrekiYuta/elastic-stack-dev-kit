@@ -12,3 +12,15 @@ es = Elasticsearch(
     api_key=ELASTICSEARCH_APIKEY,
     # verify_certs=False
 )
+# todo refactor to rest client
+'''
+
+new a rest_client
+
+es and kb use the same client
+
+put,post,delete ...  func
+
+a param to resolve kibana or elasticsearch url and header
+
+'''
