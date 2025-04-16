@@ -1,48 +1,28 @@
 import os
-import requests
-import urllib3
 from dotenv import load_dotenv
+from common_core.rest_client import RestClient
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
+# Load environment variables from the .env file
 load_dotenv()
+
+# Retrieve Kibana host and API key from environment variables
 KIBANA_HOST = os.getenv("METRICOPS_KB_HOST_ETE")
 KIBANA_API_KEY = os.getenv("METRICOPS_KB_APIKEY_ETE")
 
+# Raise an error if Kibana configurations are not correctly loaded
+if not KIBANA_HOST or not KIBANA_API_KEY:
+    raise EnvironmentError("Kibana configuration not properly loaded. Please check your .env file.")
+
+# Set up the headers for Kibana API requests
 HEADERS = {
     "Authorization": f"ApiKey {KIBANA_API_KEY}",
-    "kbn-xsrf": "true",
+    "kbn-xsrf": "true",  # Prevents cross-site request forgery in Kibana
     "Content-Type": "application/json"
 }
 
-DEFAULT_SPACE = "default"
-
-def build_url(endpoint: str, space: str = None):
-    if space or DEFAULT_SPACE:
-        space_segment = space or DEFAULT_SPACE
-        return f"{KIBANA_HOST}/s/{space_segment}/api/dashboards/dashboard{endpoint}"
-    return f"{KIBANA_HOST}/api/dashboards/dashboard{endpoint}"
-
-
-def get(endpoint: str, params=None, space: str = None):
-    url = build_url(endpoint, space)
-    response = requests.get(url, headers=HEADERS, params=params, verify=False)
-    return response.json() if response.ok else response.text
-
-
-def post(endpoint: str, data: dict, space: str = None):
-    url = build_url(endpoint, space)
-    response = requests.post(url, headers=HEADERS, json=data, verify=False)
-    return response.json() if response.ok else response.text
-
-
-def put(endpoint: str, data: dict, space: str = None):
-    url = build_url(endpoint, space)
-    response = requests.put(url, headers=HEADERS, json=data, verify=False)
-    return response.json() if response.ok else response.text
-
-
-def delete(endpoint: str, space: str = None):
-    url = build_url(endpoint, space)
-    response = requests.delete(url, headers=HEADERS, verify=False)
-    return response.json() if response.ok else response.text
+# Instantiate the RestClient with the provided Kibana host, headers, and timeout
+kibana_client = RestClient(
+    base_url=KIBANA_HOST,  # Set base URL for the Kibana server
+    headers=HEADERS,  # Set headers including API Key for authorization and anti-CSRF token
+    timeout=30  # Timeout for requests (adjust as needed)
+)

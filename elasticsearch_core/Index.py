@@ -1,30 +1,26 @@
-from elasticsearch_core.es_client import es
+from elasticsearch_core.es_client import elasticsearch_client as es
 
-def create_an_index(index_name, mappings=None, settings=None, aliases=None):
-    return es.indices.create(
-        index=index_name,
-        mappings=mappings,
-        settings=settings,
-        aliases=aliases
-    )
+
+def create_an_index(index_name, body):
+    return es.put(endpoint=f"{index_name}", json=body)
 
 
 def delete_indices(index_pattern):
-    return es.indices.delete(index=index_pattern)
+    return es.delete(endpoint=f"{index_pattern}")
 
 
 if __name__ == "__main__":
-    mappings = {
-        "properties": {
-            "timestamp": {"type": "date"},
-            "message": {"type": "text"}
+    body = {
+        "mappings": {
+            "properties": {
+                "timestamp": {"type": "date"},
+                "message": {"type": "text"}
+            }
+        },
+        "aliases": {
+            "logs-latest": {}
         }
     }
 
-    aliases = {
-        "logs-latest": {}
-    }
-
-    print(create_an_index("my_test_index", mappings=mappings, aliases=aliases))
-
+    print(create_an_index("my_test_index", body=body))
     print(delete_indices("my_test_index"))
