@@ -15,11 +15,27 @@
 '''
 import json
 
-from kibana_core import dashboard as dsb
+from kibana_core.dashboard import get_list_of_dashboards
 
-if __name__ == '__main__':
-    dashboards = dsb.get_list_of_dashboards(page=1, per_page=300, space="stable")
-    dashboard_info = dsb.list_dashboard_info(dashboards)
+
+def list_dashboard_info(dashboards):
+    # Extract and format the dashboard info from the response
+    dashboard_list = []
+    for dashboard in dashboards.get('items', []):
+        dashboard_list.append({
+            "id": dashboard.get("id"),
+            "title": dashboard.get("attributes", {}).get("title"),
+            "createdAt": dashboard.get("createdAt"),
+            "createdBy": dashboard.get("createdBy"),
+            "updatedAt": dashboard.get("updatedAt"),
+            "updatedBy": dashboard.get("updatedBy"),
+            "namespaces": dashboard.get("namespaces")
+        })
+    return dashboard_list
+
+
+if __name__ == "__main__":
+    # Example: Fetch dashboards and list their info
+    dashboards = get_list_of_dashboards(space="stable")
+    dashboard_info = list_dashboard_info(dashboards)
     print(json.dumps(dashboard_info, indent=2, ensure_ascii=False))
-
-    #  maybe need get azure ad userid info
