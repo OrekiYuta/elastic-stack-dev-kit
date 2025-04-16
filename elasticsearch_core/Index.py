@@ -1,4 +1,4 @@
-from elasticsearch_core.es_client import elasticsearch_client as es
+from common_core.client_factory import es_client as es
 
 
 def create_an_index(index_name, body):

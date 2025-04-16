@@ -1,5 +1,5 @@
 import json
-from kibana_core.kb_client import kibana_client as kb
+from common_core.client_factory import kb_client as kb
 
 # Define default space if not provided
 DEFAULT_SPACE = "default"
