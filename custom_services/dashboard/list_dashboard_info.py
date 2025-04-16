@@ -13,3 +13,13 @@
 
   patch createBy and updatedBy user name
 '''
+import json
+
+from kibana_core import dashboard as dsb
+
+if __name__ == '__main__':
+    dashboards = dsb.get_list_of_dashboards(page=1, per_page=300, space="stable")
+    dashboard_info = dsb.list_dashboard_info(dashboards)
+    print(json.dumps(dashboard_info, indent=2, ensure_ascii=False))
+
+    #  maybe need get azure ad userid info
