@@ -5,7 +5,7 @@ pre-configured environments and automation scripts.
 
 ## Workflow
 
-![workflow](./assets/workflow.svg)
+![workflow](./assets/workflow.png)
 
 ## Features
 
